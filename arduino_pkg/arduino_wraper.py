@@ -1,13 +1,8 @@
 import rclpy
 from rclpy.node import Node
-
 from std_msgs.msg import Int16
-
 import serial
 import time
-
-
-
 
 class publisher(Node):
 
@@ -20,7 +15,6 @@ class publisher(Node):
         self.pub_b = self.create_publisher(Int16, 'value_b', 10)
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-
         self.subscription = self.create_subscription(Int16, 'write', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
 
@@ -30,15 +24,12 @@ class publisher(Node):
         self.serial.write(str.encode(payload_send))
         #print(payload_send)
         
-
     def timer_callback(self):
-        
         payload_rec = self.serial.readline()
         a = int(chr(payload_rec[0]))
         b1 = payload_rec[2]; b2 = payload_rec[3]; b3 = payload_rec[4]
         b = int(chr(b1) + chr(b2) + chr(b3))
         #print(a)
-
         msg_a = Int16()
         msg_b = Int16()
         msg_a.data =  a
@@ -46,14 +37,10 @@ class publisher(Node):
         self.pub_a.publish(msg_a)
         self.pub_b.publish(msg_b)
 
-
 def main(args=None):
     rclpy.init(args=args)
-
     minimal_publisher = publisher()
-
     rclpy.spin(minimal_publisher)
-
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
@@ -63,4 +50,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
